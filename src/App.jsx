@@ -684,18 +684,16 @@ export default function TennisLadderTracker() {
                     </div>
                     {displayList.map(s => {
                       const change = getRankChange(s.name);
-                      const isAaron = s.name === "Aaron Pattillo";
                       const chCount = getChallengeCount(s.name);
                       return (
                         <div key={s.name} onClick={() => setSelectedPlayer(s.name)}
                           style={{display:"grid",gridTemplateColumns:"42px 1fr 60px 70px 100px",padding:"10px 12px",fontSize:13,cursor:"pointer",alignItems:"center",
-                            borderBottom:"1px solid #f5f5f4",background:isAaron?"#eff6ff":"transparent",transition:"background 0.1s"}}
-                          onMouseEnter={e => { if(!isAaron) e.currentTarget.style.background="#fafaf9"; }}
-                          onMouseLeave={e => { if(!isAaron) e.currentTarget.style.background="transparent"; }}>
+                            borderBottom:"1px solid #f5f5f4",transition:"background 0.1s"}}
+                          onMouseEnter={e => { e.currentTarget.style.background="#fafaf9"; }}
+                          onMouseLeave={e => { e.currentTarget.style.background="transparent"; }}>
                           <span style={{fontWeight:700,color:s.rank<=3?"#1a472a":"#78716c",fontSize:14}}>{s.rank}</span>
-                          <span style={{fontWeight:isAaron?700:500}}>
+                          <span style={{fontWeight:500}}>
                             {s.name}
-                            {isAaron && <span style={{marginLeft:6,fontSize:9,background:"#2563eb",color:"#fff",padding:"1px 5px",borderRadius:4,verticalAlign:"middle"}}>YOU</span>}
                             {chCount > 0 && <span style={{marginLeft:6,fontSize:9,background:"#fef3c7",color:"#92400e",padding:"1px 5px",borderRadius:4,verticalAlign:"middle"}}>{chCount}CH</span>}
                           </span>
                           <span style={{fontWeight:600,color:"#44403c"}}>{s.points ?? "\u2014"}</span>
@@ -713,17 +711,15 @@ export default function TennisLadderTracker() {
                       <span>#</span><span>Player</span><span>Pts</span><span>Record</span>
                     </div>
                     {displayList.map((s, idx) => {
-                      const isAaron = s.name === "Aaron Pattillo";
                       return (
                         <div key={s.name} onClick={() => setSelectedPlayer(s.name)}
                           style={{display:"grid",gridTemplateColumns:"42px 1fr 60px 80px",padding:"10px 12px",fontSize:13,cursor:"pointer",alignItems:"center",
-                            borderBottom:"1px solid #f5f5f4",background:isAaron?"#eff6ff":"transparent",transition:"background 0.1s"}}
-                          onMouseEnter={e => { if(!isAaron) e.currentTarget.style.background="#fafaf9"; }}
-                          onMouseLeave={e => { if(!isAaron) e.currentTarget.style.background="transparent"; }}>
+                            borderBottom:"1px solid #f5f5f4",transition:"background 0.1s"}}
+                          onMouseEnter={e => { e.currentTarget.style.background="#fafaf9"; }}
+                          onMouseLeave={e => { e.currentTarget.style.background="transparent"; }}>
                           <span style={{fontWeight:700,color:s.rank<=3?"#1a472a":"#78716c",fontSize:14}}>{s.rank}</span>
-                          <span style={{fontWeight:isAaron?700:500}}>
+                          <span style={{fontWeight:500}}>
                             {s.name}
-                            {isAaron && <span style={{marginLeft:6,fontSize:9,background:"#2563eb",color:"#fff",padding:"1px 5px",borderRadius:4,verticalAlign:"middle"}}>YOU</span>}
                           </span>
                           <span style={{fontWeight:600,color:"#44403c"}}>{s.points}</span>
                           <span style={{fontWeight:600,color:"#16a34a",fontSize:12}}>{s.wins}W-{s.losses}L</span>
@@ -816,17 +812,18 @@ export default function TennisLadderTracker() {
         })()}
 
         {/* This Week */}
-        {view === "week4" && !selectedPlayer && (
+        {view === "week4" && !selectedPlayer && (() => {
+          const officialRankings = computePointStandings("assigned");
+          return (
           <div style={{background:"#fff",borderRadius:12,border:"1px solid #e7e5e4",padding:16}}>
             <h3 style={{margin:"0 0 4px",fontSize:15,fontWeight:700}}>Week 4 Assignments</h3>
             <p style={{margin:"0 0 14px",fontSize:12,color:"#78716c"}}>Scores due Wednesday, April 1 by 8:00pm</p>
             {WEEK4_ASSIGNMENTS.map(([a, b], i) => {
-              const isYours = a === "Aaron Pattillo" || b === "Aaron Pattillo";
-              const aRank = WEEK_STANDINGS[3].standings.find(s => s.name === a)?.rank;
-              const bRank = WEEK_STANDINGS[3].standings.find(s => s.name === b)?.rank;
+              const aRank = officialRankings.find(s => s.name === a)?.rank;
+              const bRank = officialRankings.find(s => s.name === b)?.rank;
               return (
                 <div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 12px",borderRadius:8,marginBottom:4,fontSize:13,
-                  background:isYours?"#eff6ff":(i%2===0?"#fafaf9":"#fff"),border:isYours?"2px solid #93c5fd":"1px solid transparent"}}>
+                  background:i%2===0?"#fafaf9":"#fff",border:"1px solid transparent"}}>
                   <div style={{display:"flex",alignItems:"center",gap:8}}>
                     <span style={{fontSize:11,color:"#a8a29e",width:20}}>#{aRank}</span>
                     <span style={{fontWeight:600}}>{a}</span>
@@ -834,12 +831,12 @@ export default function TennisLadderTracker() {
                     <span style={{fontWeight:600}}>{b}</span>
                     <span style={{fontSize:11,color:"#a8a29e"}}>#{bRank}</span>
                   </div>
-                  {isYours && <span style={{fontSize:10,background:"#2563eb",color:"#fff",padding:"2px 6px",borderRadius:4}}>YOUR MATCH</span>}
                 </div>
               );
             })}
           </div>
-        )}
+          );
+        })()}
 
         {/* Report Score */}
         {view === "report" && !selectedPlayer && (
@@ -863,14 +860,12 @@ export default function TennisLadderTracker() {
                 <span>#</span><span>Name</span><span>Phone</span><span>Email</span>
               </div>
               {directoryList.map((p, i) => {
-                const isAaron = p.name === "Aaron Pattillo";
                 return (
                   <div key={p.name} style={{display:"grid",gridTemplateColumns:"36px 1fr 1fr 1fr",padding:"10px 12px",fontSize:13,alignItems:"center",
-                    borderBottom:i<directoryList.length-1?"1px solid #f5f5f4":"none",background:isAaron?"#eff6ff":"transparent"}}>
+                    borderBottom:i<directoryList.length-1?"1px solid #f5f5f4":"none"}}>
                     <span style={{fontWeight:600,color:"#a8a29e",fontSize:11}}>{p.rank}</span>
-                    <span style={{fontWeight:isAaron?700:500,cursor:"pointer"}} onClick={() => setSelectedPlayer(p.name)}>
+                    <span style={{fontWeight:500,cursor:"pointer"}} onClick={() => setSelectedPlayer(p.name)}>
                       {p.name}
-                      {isAaron && <span style={{marginLeft:6,fontSize:9,background:"#2563eb",color:"#fff",padding:"1px 5px",borderRadius:4,verticalAlign:"middle"}}>YOU</span>}
                     </span>
                     <span style={{color:p.phone?"#44403c":"#d6d3d1",fontSize:12}}>
                       {p.phone ? <a href={`tel:${p.phone}`} style={{color:"#2563eb",textDecoration:"none"}}>{p.phone}</a> : "Not listed"}
