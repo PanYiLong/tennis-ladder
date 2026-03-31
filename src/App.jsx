@@ -241,16 +241,18 @@ function getRecordByType(matches, playerName, type) {
   return { wins: w, losses: l, total: w + l };
 }
 
-// Scoring formula: only first 2 sets count. Scores are from winner's perspective.
+// Scoring formula: only first 2 sets count. 3rd set (or 10-pt TB) decides winner only.
 // Winner = 26 - loser's games in first 2 sets. Loser = their games in first 2 sets.
+// Score format is always p1-p2 per set, so we identify which player is the loser
+// and sum their games across the first two sets.
 function computeMatchPoints(match) {
   if (match.score === "w/o") return { winnerPts: 12, loserPts: 0 };
-  const sets = match.score.split(", ").map(s => {
-    const parts = s.replace(/\s*\(.*\)/, "").split("-").map(Number);
-    return parts;
-  });
-  // Only first 2 sets; sideB (second number) = loser's games
-  const loserGames = sets.slice(0, 2).reduce((sum, [a, b]) => sum + b, 0);
+  const sets = match.score.split(", ").map(s =>
+    s.replace(/\s*\(.*\)/, "").split("-").map(Number)
+  );
+  const loserIsP1 = match.winner === match.p2; // p1 lost if p2 won
+  // For each set [p1games, p2games], pick the loser's game count
+  const loserGames = sets.slice(0, 2).reduce((sum, [a, b]) => sum + (loserIsP1 ? a : b), 0);
   return { winnerPts: 26 - loserGames, loserPts: loserGames };
 }
 
