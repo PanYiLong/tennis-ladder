@@ -183,6 +183,24 @@ const WEEK4_ASSIGNMENTS = [
 ];
 
 // ─── UTILITIES ───────────────────────────────────────────────
+function computeWeeklyPoints(weekNum) {
+  const weekMatches = MATCHES.filter(m => m.week === weekNum);
+  const pts = {};
+  const wins = {};
+  const losses = {};
+  weekMatches.forEach(m => {
+    const { winnerPts, loserPts } = computeMatchPoints(m);
+    const loser = m.winner === m.p1 ? m.p2 : m.p1;
+    pts[m.winner] = (pts[m.winner] || 0) + winnerPts;
+    pts[loser] = (pts[loser] || 0) + loserPts;
+    wins[m.winner] = (wins[m.winner] || 0) + 1;
+    losses[loser] = (losses[loser] || 0) + 1;
+  });
+  return Object.entries(pts)
+    .map(([name, points]) => ({ name, points, wins: wins[name] || 0, losses: losses[name] || 0 }))
+    .sort((a, b) => b.points - a.points);
+}
+
 function getRankHistory(playerName) {
   return WEEK_STANDINGS.map(ws => {
     const entry = ws.standings.find(s => s.name === playerName);
@@ -323,7 +341,7 @@ function ScoreReportForm() {
   const [set3type, setSet3type] = useState("set");
   const [winner, setWinner] = useState("");
   const [walkover, setWalkover] = useState(false);
-  const [sent, setSent] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const currentAssignment = selectedMatch !== "" ? WEEK4_ASSIGNMENTS[parseInt(selectedMatch)] : null;
   const p1Name = matchType === "assigned" ? currentAssignment?.[0] : challengeP1;
@@ -338,21 +356,41 @@ function ScoreReportForm() {
 
   const isValid = p1Name && p2Name && winner && (walkover || (set1a && set1b && set2a && set2b));
 
-  const buildMailto = () => {
+  const buildClipboardText = () => {
     const typeLabel = matchType === "challenge" ? "CHALLENGE " : "";
-    const subject = encodeURIComponent(`3.5 Ladder - Week 4 ${typeLabel}Score: ${p1Name} vs ${p2Name}`);
     const winnerName = winner === "p1" ? p1Name : p2Name;
-    const body = encodeURIComponent(
+    const p1Email = PLAYER_DIRECTORY[p1Name]?.email || "";
+    const p2Email = PLAYER_DIRECTORY[p2Name]?.email || "";
+    const ccList = [p1Email, p2Email].filter(Boolean).join(", ");
+    return (
+      `To: ${KATHY_EMAIL}` +
+      (ccList ? `\nCC: ${ccList}` : "") +
+      `\nSubject: 3.5 Ladder - Week 4 ${typeLabel}Score: ${p1Name} vs ${p2Name}\n\n` +
       `Hi Kathy,\n\nReporting our Week 4 ${typeLabel}match result:\n\n` +
       `${p1Name} vs ${p2Name}\n` +
       `Score: ${scoreString}\n` +
       `Winner: ${winnerName}\n\nThanks!`
     );
-    const p1Email = PLAYER_DIRECTORY[p1Name]?.email || "";
-    const p2Email = PLAYER_DIRECTORY[p2Name]?.email || "";
-    const ccList = [p1Email, p2Email].filter(Boolean).join(",");
-    const ccParam = ccList ? `&cc=${encodeURIComponent(ccList)}` : "";
-    return `mailto:${KATHY_EMAIL}?subject=${subject}${ccParam}&body=${body}`;
+  };
+
+  const handleCopyScore = async () => {
+    if (!isValid) return;
+    const text = buildClipboardText();
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch {
+      // Fallback for browsers without clipboard API
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+    }
+    setCopied(true);
   };
 
   const inp = { padding:"8px 12px",fontSize:14,border:"1px solid #d6d3d1",borderRadius:8,outline:"none",background:"#fff",width:"100%",boxSizing:"border-box" };
@@ -360,13 +398,13 @@ function ScoreReportForm() {
   const lbl = { fontSize:12,fontWeight:600,color:"#57534e",display:"block",marginBottom:4 };
   const sci = { ...inp,width:52,textAlign:"center",padding:"8px 4px",fontSize:18,fontWeight:700,fontFamily:"'SF Mono',monospace" };
 
-  const resetForm = () => { setSent(false); setSelectedMatch(""); setWinner(""); setSet1a(""); setSet1b(""); setSet2a(""); setSet2b(""); setSet3a(""); setSet3b(""); setWalkover(false); setChallengeP1(""); setChallengeP2(""); };
+  const resetForm = () => { setCopied(false); setSelectedMatch(""); setWinner(""); setSet1a(""); setSet1b(""); setSet2a(""); setSet2b(""); setSet3a(""); setSet3b(""); setWalkover(false); setChallengeP1(""); setChallengeP2(""); };
 
-  if (sent) return (
+  if (copied) return (
     <div style={{textAlign:"center",padding:"40px 20px"}}>
-      <div style={{fontSize:48,marginBottom:12}}>&#9989;</div>
-      <h3 style={{margin:"0 0 8px",fontSize:18,fontWeight:700}}>Email Ready!</h3>
-      <p style={{fontSize:13,color:"#78716c",margin:"0 0 20px"}}>Your email client should have opened with the score pre-filled. Just hit send.</p>
+      <div style={{fontSize:48,marginBottom:12}}>&#128203;</div>
+      <h3 style={{margin:"0 0 8px",fontSize:18,fontWeight:700}}>Copied to Clipboard!</h3>
+      <p style={{fontSize:13,color:"#78716c",margin:"0 0 20px"}}>The score report is ready to paste into an email or message to Kathy.</p>
       <button onClick={resetForm} style={{padding:"8px 20px",fontSize:13,background:"#1a472a",color:"#fff",border:"none",borderRadius:8,cursor:"pointer",fontWeight:600}}>Report Another Score</button>
     </div>
   );
@@ -477,21 +515,21 @@ function ScoreReportForm() {
       {/* Preview */}
       {isValid && (
         <div style={{background:"#f5f5f4",borderRadius:8,padding:12,fontSize:13,color:"#44403c",lineHeight:1.6}}>
-          <div style={{fontWeight:600,marginBottom:4,fontSize:11,color:"#a8a29e",textTransform:"uppercase"}}>Email Preview</div>
+          <div style={{fontWeight:600,marginBottom:4,fontSize:11,color:"#a8a29e",textTransform:"uppercase"}}>Score Preview</div>
           <div><strong>To:</strong> {KATHY_EMAIL}</div>
           <div><strong>Subject:</strong> 3.5 Ladder - Week 4 {matchType==="challenge"?"CHALLENGE ":""}Score: {p1Name} vs {p2Name}</div>
           <div style={{marginTop:8}}>{p1Name} vs {p2Name}<br/>Score: {scoreString}<br/>Winner: {winner === "p1" ? p1Name : p2Name}</div>
         </div>
       )}
 
-      <a href={isValid ? buildMailto() : undefined} onClick={() => { if (isValid) setSent(true); }}
-        style={{display:"block",textAlign:"center",padding:"12px 20px",fontSize:14,fontWeight:700,
+      <button onClick={handleCopyScore} disabled={!isValid}
+        style={{display:"block",width:"100%",textAlign:"center",padding:"12px 20px",fontSize:14,fontWeight:700,
           background:isValid?"#1a472a":"#d6d3d1",color:isValid?"#fff":"#a8a29e",
-          border:"none",borderRadius:10,cursor:isValid?"pointer":"not-allowed",textDecoration:"none",
-          transition:"all 0.15s",pointerEvents:isValid?"auto":"none"}}>
-        Open in Email &rarr;
-      </a>
-      <p style={{fontSize:11,color:"#a8a29e",textAlign:"center",margin:0}}>Opens your email client with the score pre-filled. You and your opponent will be CC'd if emails are on file.</p>
+          border:"none",borderRadius:10,cursor:isValid?"pointer":"not-allowed",
+          transition:"all 0.15s"}}>
+        Copy Score to Clipboard &#128203;
+      </button>
+      <p style={{fontSize:11,color:"#a8a29e",textAlign:"center",margin:0}}>Copies a pre-formatted score report — paste into an email or text to Kathy. Your opponent will be listed in the CC field.</p>
     </div>
   );
 }
@@ -758,7 +796,7 @@ export default function TennisLadderTracker() {
             <>
               {/* Week selector */}
               <div style={{display:"flex",gap:8,marginBottom:8}}>
-                {[1,2,3].map(w => (
+                {[1,2,3,4].map(w => (
                   <button key={w} onClick={() => setSelectedWeek(w+1)}
                     style={{padding:"5px 12px",fontSize:12,fontWeight:selectedWeek===w+1?700:400,
                       background:selectedWeek===w+1?"#1a472a":"#fff",color:selectedWeek===w+1?"#fff":"#44403c",
@@ -781,6 +819,11 @@ export default function TennisLadderTracker() {
               </div>
 
               {/* Assigned matches */}
+              {showAssigned && assignedMatches.length === 0 && resultFilter !== "challenge" && (
+                <div style={{background:"#fff",borderRadius:12,border:"1px solid #e7e5e4",padding:"32px 16px",textAlign:"center",marginBottom:12}}>
+                  <p style={{fontSize:13,color:"#a8a29e",margin:0}}>No results reported yet for Week {weekNum}. Check back soon!</p>
+                </div>
+              )}
               {showAssigned && assignedMatches.length > 0 && (
                 <div style={{background:"#fff",borderRadius:12,border:"1px solid #e7e5e4",padding:16,marginBottom:challengeMatches.length > 0 && showChallenge ? 12 : 0}}>
                   <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12}}>
@@ -807,6 +850,31 @@ export default function TennisLadderTracker() {
                   <p style={{fontSize:13,color:"#a8a29e",margin:0}}>No challenge matches were played in Week {weekNum}.</p>
                 </div>
               )}
+
+              {/* Weekly Points Summary */}
+              {(() => {
+                const weekPts = computeWeeklyPoints(weekNum);
+                if (weekPts.length === 0) return null;
+                return (
+                  <div style={{background:"#fff",borderRadius:12,border:"1px solid #e7e5e4",padding:16,marginTop:12}}>
+                    <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12}}>
+                      <h3 style={{margin:0,fontSize:15,fontWeight:700}}>Week {weekNum} Points Earned</h3>
+                      <span style={{fontSize:11,background:"#f0fdf4",color:"#16a34a",padding:"2px 8px",borderRadius:10,fontWeight:600}}>by match</span>
+                    </div>
+                    <div style={{display:"grid",gridTemplateColumns:"32px 1fr 60px 70px",padding:"6px 8px",fontSize:11,fontWeight:600,color:"#a8a29e",borderBottom:"1px solid #e7e5e4",textTransform:"uppercase",letterSpacing:"0.05em"}}>
+                      <span>#</span><span>Player</span><span style={{textAlign:"right"}}>Pts</span><span style={{textAlign:"right"}}>Record</span>
+                    </div>
+                    {weekPts.map((s, i) => (
+                      <div key={s.name} style={{display:"grid",gridTemplateColumns:"32px 1fr 60px 70px",padding:"7px 8px",fontSize:13,alignItems:"center",borderBottom:i<weekPts.length-1?"1px solid #f5f5f4":"none"}}>
+                        <span style={{fontWeight:700,color:i<3?"#1a472a":"#a8a29e",fontSize:12}}>{i+1}</span>
+                        <span style={{fontWeight:500,cursor:"pointer",color:"#1c1917"}} onClick={() => setSelectedPlayer(s.name)}>{s.name}</span>
+                        <span style={{fontWeight:700,color:"#1a472a",textAlign:"right"}}>{s.points}</span>
+                        <span style={{fontSize:12,color:"#78716c",textAlign:"right"}}>{s.wins}W-{s.losses}L</span>
+                      </div>
+                    ))}
+                  </div>
+                );
+              })()}
             </>
           );
         })()}
@@ -842,7 +910,7 @@ export default function TennisLadderTracker() {
         {view === "report" && !selectedPlayer && (
           <div style={{background:"#fff",borderRadius:12,border:"1px solid #e7e5e4",padding:20}}>
             <h3 style={{margin:"0 0 4px",fontSize:15,fontWeight:700}}>Report a Score</h3>
-            <p style={{margin:"0 0 16px",fontSize:12,color:"#78716c"}}>Fill in the match details below. This opens a pre-formatted email to Kathy with your opponent CC'd.</p>
+            <p style={{margin:"0 0 16px",fontSize:12,color:"#78716c"}}>Fill in the match details below. This copies a pre-formatted score report to your clipboard — paste it into an email or text to Kathy.</p>
             <ScoreReportForm/>
           </div>
         )}
