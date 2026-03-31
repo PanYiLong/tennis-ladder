@@ -1,4 +1,6 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
+import { db } from "./firebase";
+import { collection, addDoc, onSnapshot, query, orderBy } from "firebase/firestore";
 
 // ─── REAL DATA ───────────────────────────────────────────────
 const PLAYERS = [
@@ -170,18 +172,7 @@ const MATCHES = [
   {week:3,type:"challenge",p1:"Jason Eckstein",p2:"Bob Tawa",winner:"Bob Tawa",score:"6-2, 6-3"},
 ];
 
-// ─── LOCAL MATCH STORAGE ─────────────────────────────────────
-const LS_KEY = "ladder_reported_matches_v1";
-function loadLocalMatches() {
-  try {
-    const raw = localStorage.getItem(LS_KEY);
-    return raw ? JSON.parse(raw) : [];
-  } catch { return []; }
-}
-function saveLocalMatches(list) {
-  try { localStorage.setItem(LS_KEY, JSON.stringify(list)); } catch {}
-}
-// Locally-reported matches are merged at runtime via React state (see TennisLadderTracker)
+// Reported matches are stored in and read from Firebase Firestore in real time
 
 const WEEK4_ASSIGNMENTS = [
   ["Karlston Nasser","Bob Tawa"],["Peter Champe","Jason Eckstein"],
@@ -570,9 +561,19 @@ export default function TennisLadderTracker() {
   const [dirSearch, setDirSearch] = useState("");
   const [standingsMode, setStandingsMode] = useState("assigned"); // "assigned" (official) or "all"
   const [resultFilter, setResultFilter] = useState("all"); // "all", "assigned", "challenge"
-  const [reportedMatches, setReportedMatches] = useState(() => loadLocalMatches());
+  const [reportedMatches, setReportedMatches] = useState([]);
 
-  // allMatches = official hardcoded matches + locally reported ones
+  // Subscribe to Firestore reported_matches collection in real time
+  useEffect(() => {
+    const q = query(collection(db, "reported_matches"), orderBy("reportedAt", "asc"));
+    const unsub = onSnapshot(q, (snapshot) => {
+      const docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setReportedMatches(docs);
+    });
+    return () => unsub();
+  }, []);
+
+  // allMatches = official hardcoded matches + Firestore-reported ones (deduped)
   const allMatches = useMemo(() => {
     const deduped = reportedMatches.filter(r =>
       !MATCHES.some(m => m.week === r.week && m.p1 === r.p1 && m.p2 === r.p2)
@@ -580,17 +581,21 @@ export default function TennisLadderTracker() {
     return [...MATCHES, ...deduped];
   }, [reportedMatches]);
 
-  const addReportedMatch = useCallback((match) => {
-    setReportedMatches(prev => {
-      const alreadyIn = prev.some(
-        e => e.week === match.week && e.p1 === match.p1 && e.p2 === match.p2
-      );
-      if (alreadyIn) return prev;
-      const next = [...prev, match];
-      saveLocalMatches(next);
-      return next;
-    });
-  }, []);
+  const addReportedMatch = useCallback(async (match) => {
+    const alreadyIn = reportedMatches.some(
+      e => e.week === match.week && e.p1 === match.p1 && e.p2 === match.p2
+    );
+    if (alreadyIn) return;
+    try {
+      await addDoc(collection(db, "reported_matches"), {
+        ...match,
+        reportedAt: Date.now(),
+      });
+      // onSnapshot will update state automatically — no manual setReportedMatches needed
+    } catch (err) {
+      console.error("Failed to save match to Firestore:", err);
+    }
+  }, [reportedMatches]);
 
   const currentStandings = WEEK_STANDINGS[selectedWeek - 1]?.standings || [];
   const prevStandings = selectedWeek > 1 ? WEEK_STANDINGS[selectedWeek - 2]?.standings : null;
