@@ -183,8 +183,10 @@ const WEEK4_ASSIGNMENTS = [
 ];
 
 // ─── UTILITIES ───────────────────────────────────────────────
-function computeWeeklyPoints(weekNum) {
-  const weekMatches = MATCHES.filter(m => m.week === weekNum);
+function computeWeeklyPoints(weekNum, typeFilter = "all") {
+  const weekMatches = MATCHES.filter(m =>
+    m.week === weekNum && (typeFilter === "all" ? true : m.type === typeFilter)
+  );
   const pts = {};
   const wins = {};
   const losses = {};
@@ -853,13 +855,14 @@ export default function TennisLadderTracker() {
 
               {/* Weekly Points Summary */}
               {(() => {
-                const weekPts = computeWeeklyPoints(weekNum);
+                const weekPts = computeWeeklyPoints(weekNum, resultFilter);
                 if (weekPts.length === 0) return null;
+                const filterLabel = resultFilter === "assigned" ? "Assigned" : resultFilter === "challenge" ? "Challenge" : "All Matches";
                 return (
                   <div style={{background:"#fff",borderRadius:12,border:"1px solid #e7e5e4",padding:16,marginTop:12}}>
                     <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12}}>
                       <h3 style={{margin:0,fontSize:15,fontWeight:700}}>Week {weekNum} Points Earned</h3>
-                      <span style={{fontSize:11,background:"#f0fdf4",color:"#16a34a",padding:"2px 8px",borderRadius:10,fontWeight:600}}>by match</span>
+                      <span style={{fontSize:11,background:"#f0fdf4",color:"#16a34a",padding:"2px 8px",borderRadius:10,fontWeight:600}}>{filterLabel}</span>
                     </div>
                     <div style={{display:"grid",gridTemplateColumns:"32px 1fr 60px 70px",padding:"6px 8px",fontSize:11,fontWeight:600,color:"#a8a29e",borderBottom:"1px solid #e7e5e4",textTransform:"uppercase",letterSpacing:"0.05em"}}>
                       <span>#</span><span>Player</span><span style={{textAlign:"right"}}>Pts</span><span style={{textAlign:"right"}}>Record</span>
