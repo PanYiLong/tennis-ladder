@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useReducer, useCallback } from "react";
 
 // ─── REAL DATA ───────────────────────────────────────────────
 const PLAYERS = [
@@ -170,6 +170,25 @@ const MATCHES = [
   {week:3,type:"challenge",p1:"Jason Eckstein",p2:"Bob Tawa",winner:"Bob Tawa",score:"6-2, 6-3"},
 ];
 
+// ─── LOCAL MATCH STORAGE ─────────────────────────────────────
+const LS_KEY = "ladder_reported_matches_v1";
+function loadLocalMatches() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch { return []; }
+}
+function saveLocalMatches(list) {
+  try { localStorage.setItem(LS_KEY, JSON.stringify(list)); } catch {}
+}
+// Merge locally-reported matches into the MATCHES array on load
+loadLocalMatches().forEach(m => {
+  const alreadyIn = MATCHES.some(
+    e => e.week === m.week && e.p1 === m.p1 && e.p2 === m.p2
+  );
+  if (!alreadyIn) MATCHES.push(m);
+});
+
 const WEEK4_ASSIGNMENTS = [
   ["Karlston Nasser","Bob Tawa"],["Peter Champe","Jason Eckstein"],
   ["Victor Casler","Phil Astras"],["Lorne Noble","Ming Cai"],
@@ -332,7 +351,7 @@ function RankChart({ playerName }) {
 }
 
 // ─── SCORE REPORT FORM ──────────────────────────────────────
-function ScoreReportForm() {
+function ScoreReportForm({ onMatchReported }) {
   const [matchType, setMatchType] = useState("assigned");
   const [selectedMatch, setSelectedMatch] = useState("");
   const [challengeP1, setChallengeP1] = useState("");
@@ -392,6 +411,18 @@ function ScoreReportForm() {
       document.execCommand("copy");
       document.body.removeChild(ta);
     }
+    // Save the match into the live MATCHES array so it shows in Week 4 results
+    const winnerName = winner === "p1" ? p1Name : p2Name;
+    const newMatch = {
+      week: 4,
+      type: matchType,
+      p1: p1Name,
+      p2: p2Name,
+      winner: winnerName,
+      score: scoreString,
+      pending: true, // locally reported, not yet officially confirmed
+    };
+    if (onMatchReported) onMatchReported(newMatch);
     setCopied(true);
   };
 
@@ -545,6 +576,22 @@ export default function TennisLadderTracker() {
   const [dirSearch, setDirSearch] = useState("");
   const [standingsMode, setStandingsMode] = useState("assigned"); // "assigned" (official) or "all"
   const [resultFilter, setResultFilter] = useState("all"); // "all", "assigned", "challenge"
+  const [, forceRefresh] = useReducer(n => n + 1, 0);
+
+  const addReportedMatch = useCallback((match) => {
+    const alreadyIn = MATCHES.some(
+      e => e.week === match.week && e.p1 === match.p1 && e.p2 === match.p2
+    );
+    if (!alreadyIn) {
+      MATCHES.push(match);
+      const stored = loadLocalMatches().filter(
+        e => !(e.week === match.week && e.p1 === match.p1 && e.p2 === match.p2)
+      );
+      stored.push(match);
+      saveLocalMatches(stored);
+    }
+    forceRefresh();
+  }, []);
 
   const currentStandings = WEEK_STANDINGS[selectedWeek - 1]?.standings || [];
   const prevStandings = selectedWeek > 1 ? WEEK_STANDINGS[selectedWeek - 2]?.standings : null;
@@ -785,10 +832,11 @@ export default function TennisLadderTracker() {
           const MatchRow = ({ m, i, isLast }) => (
             <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"8px 0",
               borderBottom:!isLast?"1px solid #f5f5f4":"none",fontSize:13}}>
-              <div style={{display:"flex",alignItems:"center",gap:6}}>
+              <div style={{display:"flex",alignItems:"center",gap:6,flexWrap:"wrap"}}>
                 <span style={{fontWeight:m.winner===m.p1?700:400,color:m.winner===m.p1?"#16a34a":"#78716c"}}>{m.p1}</span>
                 <span style={{color:"#d6d3d1",fontSize:11}}>vs</span>
                 <span style={{fontWeight:m.winner===m.p2?700:400,color:m.winner===m.p2?"#16a34a":"#78716c"}}>{m.p2}</span>
+                {m.pending && <span style={{fontSize:10,background:"#fef3c7",color:"#92400e",padding:"1px 6px",borderRadius:4,fontWeight:600}}>pending</span>}
               </div>
               <span style={{color:"#a8a29e",fontSize:12,fontFamily:"'SF Mono',monospace"}}>{m.score}</span>
             </div>
@@ -914,7 +962,7 @@ export default function TennisLadderTracker() {
           <div style={{background:"#fff",borderRadius:12,border:"1px solid #e7e5e4",padding:20}}>
             <h3 style={{margin:"0 0 4px",fontSize:15,fontWeight:700}}>Report a Score</h3>
             <p style={{margin:"0 0 16px",fontSize:12,color:"#78716c"}}>Fill in the match details below. This copies a pre-formatted score report to your clipboard — paste it into an email or text to Kathy.</p>
-            <ScoreReportForm/>
+            <ScoreReportForm onMatchReported={addReportedMatch}/>
           </div>
         )}
 
