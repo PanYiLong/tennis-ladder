@@ -1,4 +1,4 @@
-import { useState, useMemo, useReducer, useCallback } from "react";
+import { useState, useMemo, useCallback } from "react";
 
 // ─── REAL DATA ───────────────────────────────────────────────
 const PLAYERS = [
@@ -181,13 +181,7 @@ function loadLocalMatches() {
 function saveLocalMatches(list) {
   try { localStorage.setItem(LS_KEY, JSON.stringify(list)); } catch {}
 }
-// Merge locally-reported matches into the MATCHES array on load
-loadLocalMatches().forEach(m => {
-  const alreadyIn = MATCHES.some(
-    e => e.week === m.week && e.p1 === m.p1 && e.p2 === m.p2
-  );
-  if (!alreadyIn) MATCHES.push(m);
-});
+// Locally-reported matches are merged at runtime via React state (see TennisLadderTracker)
 
 const WEEK4_ASSIGNMENTS = [
   ["Karlston Nasser","Bob Tawa"],["Peter Champe","Jason Eckstein"],
@@ -202,8 +196,8 @@ const WEEK4_ASSIGNMENTS = [
 ];
 
 // ─── UTILITIES ───────────────────────────────────────────────
-function computeWeeklyPoints(weekNum, typeFilter = "all") {
-  const weekMatches = MATCHES.filter(m =>
+function computeWeeklyPoints(matches, weekNum, typeFilter = "all") {
+  const weekMatches = matches.filter(m =>
     m.week === weekNum && (typeFilter === "all" ? true : m.type === typeFilter)
   );
   const pts = {};
@@ -228,13 +222,13 @@ function getRankHistory(playerName) {
     return { week: ws.week, label: ws.label, rank: entry ? entry.rank : null, points: entry ? entry.points : null };
   }).filter(r => r.rank !== null);
 }
-function getPlayerMatches(playerName) {
-  return MATCHES.filter(m => m.p1 === playerName || m.p2 === playerName);
+function getPlayerMatches(matches, playerName) {
+  return matches.filter(m => m.p1 === playerName || m.p2 === playerName);
 }
-function getPlayerRecord(playerName) {
-  const matches = getPlayerMatches(playerName);
+function getPlayerRecord(matches, playerName) {
+  const playerMatches = getPlayerMatches(matches, playerName);
   let w = 0, l = 0;
-  matches.forEach(m => { if (m.winner === playerName) w++; else l++; });
+  playerMatches.forEach(m => { if (m.winner === playerName) w++; else l++; });
   return { wins: w, losses: l, total: w + l };
 }
 function getMovement(playerName) {
@@ -242,17 +236,17 @@ function getMovement(playerName) {
   if (hist.length < 2) return 0;
   return hist[0].rank - hist[hist.length - 1].rank;
 }
-function getChallengeCount(playerName) {
-  return MATCHES.filter(m => m.type === "challenge" && (m.p1 === playerName || m.p2 === playerName)).length;
+function getChallengeCount(matches, playerName) {
+  return matches.filter(m => m.type === "challenge" && (m.p1 === playerName || m.p2 === playerName)).length;
 }
 
-function getRecordByType(playerName, type) {
-  const matches = MATCHES.filter(m =>
+function getRecordByType(matches, playerName, type) {
+  const filtered = matches.filter(m =>
     (m.p1 === playerName || m.p2 === playerName) &&
     (type === "all" ? true : m.type === type)
   );
   let w = 0, l = 0;
-  matches.forEach(m => { if (m.winner === playerName) w++; else l++; });
+  filtered.forEach(m => { if (m.winner === playerName) w++; else l++; });
   return { wins: w, losses: l, total: w + l };
 }
 
@@ -269,10 +263,10 @@ function computeMatchPoints(match) {
   return { winnerPts: 26 - loserGames, loserPts: loserGames };
 }
 
-function computePointStandings(matchTypeFilter) {
+function computePointStandings(matches, matchTypeFilter) {
   const filtered = matchTypeFilter === "all"
-    ? MATCHES
-    : MATCHES.filter(m => m.type === matchTypeFilter);
+    ? matches
+    : matches.filter(m => m.type === matchTypeFilter);
   const points = {};
   const records = {};
   PLAYERS.forEach(p => { points[p] = 0; records[p] = { wins: 0, losses: 0 }; });
@@ -576,21 +570,26 @@ export default function TennisLadderTracker() {
   const [dirSearch, setDirSearch] = useState("");
   const [standingsMode, setStandingsMode] = useState("assigned"); // "assigned" (official) or "all"
   const [resultFilter, setResultFilter] = useState("all"); // "all", "assigned", "challenge"
-  const [, forceRefresh] = useReducer(n => n + 1, 0);
+  const [reportedMatches, setReportedMatches] = useState(() => loadLocalMatches());
+
+  // allMatches = official hardcoded matches + locally reported ones
+  const allMatches = useMemo(() => {
+    const deduped = reportedMatches.filter(r =>
+      !MATCHES.some(m => m.week === r.week && m.p1 === r.p1 && m.p2 === r.p2)
+    );
+    return [...MATCHES, ...deduped];
+  }, [reportedMatches]);
 
   const addReportedMatch = useCallback((match) => {
-    const alreadyIn = MATCHES.some(
-      e => e.week === match.week && e.p1 === match.p1 && e.p2 === match.p2
-    );
-    if (!alreadyIn) {
-      MATCHES.push(match);
-      const stored = loadLocalMatches().filter(
-        e => !(e.week === match.week && e.p1 === match.p1 && e.p2 === match.p2)
+    setReportedMatches(prev => {
+      const alreadyIn = prev.some(
+        e => e.week === match.week && e.p1 === match.p1 && e.p2 === match.p2
       );
-      stored.push(match);
-      saveLocalMatches(stored);
-    }
-    forceRefresh();
+      if (alreadyIn) return prev;
+      const next = [...prev, match];
+      saveLocalMatches(next);
+      return next;
+    });
   }, []);
 
   const currentStandings = WEEK_STANDINGS[selectedWeek - 1]?.standings || [];
@@ -611,9 +610,9 @@ export default function TennisLadderTracker() {
 
   const playerDetail = selectedPlayer ? {
     name: selectedPlayer,
-    record: getPlayerRecord(selectedPlayer),
-    matches: getPlayerMatches(selectedPlayer),
-    challenges: getChallengeCount(selectedPlayer),
+    record: getPlayerRecord(allMatches, selectedPlayer),
+    matches: getPlayerMatches(allMatches, selectedPlayer),
+    challenges: getChallengeCount(allMatches, selectedPlayer),
     movement: getMovement(selectedPlayer),
     currentRank: currentStandings.find(s => s.name === selectedPlayer)?.rank,
     currentPoints: currentStandings.find(s => s.name === selectedPlayer)?.points,
@@ -676,8 +675,8 @@ export default function TennisLadderTracker() {
                   {playerDetail.challenges > 0 ? ` \u00B7 ${playerDetail.challenges} challenge${playerDetail.challenges>1?"s":""}` : ""}
                 </p>
                 {playerDetail.challenges > 0 && (() => {
-                  const aRec = getRecordByType(selectedPlayer, "assigned");
-                  const cRec = getRecordByType(selectedPlayer, "challenge");
+                  const aRec = getRecordByType(allMatches, selectedPlayer, "assigned");
+                  const cRec = getRecordByType(allMatches, selectedPlayer, "challenge");
                   return (
                     <p style={{margin:"2px 0 0",fontSize:11,color:"#a8a29e"}}>
                       Assigned: {aRec.wins}W-{aRec.losses}L &middot; Challenge: {cRec.wins}W-{cRec.losses}L
@@ -720,7 +719,7 @@ export default function TennisLadderTracker() {
 
         {/* Standings */}
         {view === "standings" && !selectedPlayer && (() => {
-          const assignedRankings = standingsMode === "assigned" ? computePointStandings("assigned") : null;
+          const assignedRankings = standingsMode === "assigned" ? computePointStandings(allMatches, "assigned") : null;
           const displayList = standingsMode === "all"
             ? filteredStandings
             : (() => {
@@ -771,7 +770,7 @@ export default function TennisLadderTracker() {
                     </div>
                     {displayList.map(s => {
                       const change = getRankChange(s.name);
-                      const chCount = getChallengeCount(s.name);
+                      const chCount = getChallengeCount(allMatches, s.name);
                       return (
                         <div key={s.name} onClick={() => setSelectedPlayer(s.name)}
                           style={{display:"grid",gridTemplateColumns:"42px 1fr 60px 70px 100px",padding:"10px 12px",fontSize:13,cursor:"pointer",alignItems:"center",
@@ -823,7 +822,7 @@ export default function TennisLadderTracker() {
         {/* Results */}
         {view === "results" && !selectedPlayer && (() => {
           const weekNum = selectedWeek - 1;
-          const weekMatches = MATCHES.filter(m => m.week === weekNum);
+          const weekMatches = allMatches.filter(m => m.week === weekNum);
           const assignedMatches = weekMatches.filter(m => m.type === "assigned");
           const challengeMatches = weekMatches.filter(m => m.type === "challenge");
           const showAssigned = resultFilter === "all" || resultFilter === "assigned";
@@ -903,7 +902,7 @@ export default function TennisLadderTracker() {
 
               {/* Weekly Points Summary */}
               {(() => {
-                const weekPts = computeWeeklyPoints(weekNum, resultFilter);
+                const weekPts = computeWeeklyPoints(allMatches, weekNum, resultFilter);
                 if (weekPts.length === 0) return null;
                 const filterLabel = resultFilter === "assigned" ? "Assigned" : resultFilter === "challenge" ? "Challenge" : "All Matches";
                 return (
@@ -932,7 +931,7 @@ export default function TennisLadderTracker() {
 
         {/* This Week */}
         {view === "week4" && !selectedPlayer && (() => {
-          const officialRankings = computePointStandings("assigned");
+          const officialRankings = computePointStandings(allMatches, "assigned");
           return (
           <div style={{background:"#fff",borderRadius:12,border:"1px solid #e7e5e4",padding:16}}>
             <h3 style={{margin:"0 0 4px",fontSize:15,fontWeight:700}}>Week 4 Assignments</h3>
@@ -1003,7 +1002,7 @@ export default function TennisLadderTracker() {
         {/* Stats */}
         {view === "stats" && !selectedPlayer && (() => {
           const allPlayers = WEEK_STANDINGS[3].standings;
-          const rec = allPlayers.map(s => ({name:s.name,...getPlayerRecord(s.name),challenges:getChallengeCount(s.name),movement:getMovement(s.name),points:s.points}));
+          const rec = allPlayers.map(s => ({name:s.name,...getPlayerRecord(allMatches, s.name),challenges:getChallengeCount(allMatches, s.name),movement:getMovement(s.name),points:s.points}));
           const topWins = [...rec].sort((a,b) => b.wins - a.wins).slice(0,8);
           const climbers = [...rec].sort((a,b) => b.movement - a.movement).slice(0,5);
           const fallers = [...rec].sort((a,b) => a.movement - b.movement).slice(0,5);
