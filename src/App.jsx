@@ -12,6 +12,12 @@ const PLAYERS = [
 "Bryan Alcorn","Dez Nagle","Aaron Schacht","Duncan Rover","Phil Astras","Ryan Draves"
 ];
 
+const WITHDRAWN = [
+{ name: "Peter McIntosh", lastWeek: 4, note: "Withdrew after Week 4" },
+{ name: "Zach Apiratitham", lastWeek: 3, note: "Withdrew after Week 3" },
+{ name: "Nicholas Golovanov", lastWeek: 3, note: "Withdrew after Week 3" },
+];
+
 const PLAYER_DIRECTORY = {
 "Bryan Alcorn": { phone: "831-524-6533", email: "alcorn.bryan@gmail.com" },
 "Zach Apiratitham": { phone: "206-747-8995", email: "zack@vatthikorn.com" },
@@ -50,8 +56,6 @@ const PLAYER_DIRECTORY = {
 "Michael Voecks": { phone: "720-979-7100", email: "voecks.michael@gmail.com" },
 "Ricardo Yunis": { phone: "419-351-2256", email: "e.r.yunis@gmail.com" },
 };
-
-const KATHY_EMAIL = "kathy.webber@maritzselect.com";
 
 const WEEK_STANDINGS = [
 { week: 1, label: "Week 1 (Start)", standings: PLAYERS.map((p,i) => ({ name: p, rank: i+1, points: null })) },
@@ -115,23 +119,42 @@ const WEEK_STANDINGS = [
 {name:"Jeff Park",rank:33,points:18}
 ]},
 { week: 5, label: "Week 5", standings: [
-{name:"Victor Casler",rank:1,points:114},{name:"Jordan Logan",rank:2,points:96},
-{name:"Jason Eckstein",rank:3,points:88},{name:"Karlston Nasser",rank:4,points:83},
-{name:"Peter Champe",rank:5,points:83},{name:"Bob Tawa",rank:6,points:82},
-{name:"Lorne Noble",rank:7,points:75},{name:"JD Tulloch",rank:8,points:71},
-{name:"Brent Nelson",rank:9,points:63},{name:"Ming Cai",rank:10,points:61},
-{name:"Phil Astras",rank:11,points:58},{name:"Dez Nagle",rank:12,points:55},
-{name:"Paul Dingus",rank:13,points:51},{name:"Dave Corujo",rank:14,points:49},
-{name:"Aaron Pattillo",rank:15,points:47},{name:"Duncan Rover",rank:16,points:45},
-{name:"Yash Chandak",rank:17,points:43},{name:"Darren Berns",rank:18,points:43},
-{name:"Ricardo Yunis",rank:19,points:43},{name:"Gaurav Kukreja",rank:20,points:43},
-{name:"Oscar Castillo",rank:21,points:42},{name:"Aaron Schacht",rank:22,points:42},
-{name:"Patrick Elliott",rank:23,points:41},{name:"James Atwell",rank:24,points:40},
-{name:"Ben Thengvall",rank:25,points:39},{name:"Ryan Draves",rank:26,points:37},
-{name:"Colin Clarkin",rank:27,points:37},{name:"Dan Brenner",rank:28,points:31},
-{name:"Bryan Alcorn",rank:29,points:31},{name:"Michael Voecks",rank:30,points:29},
-{name:"Brent Schmierbach",rank:31,points:27},{name:"Saied Delagah",rank:32,points:19},
-{name:"Jeff Park",rank:33,points:18}
+{name:"Victor Casler",rank:1,points:132},{name:"Jason Eckstein",rank:2,points:109},
+{name:"Karlston Nasser",rank:3,points:108},{name:"Jordan Logan",rank:4,points:104},
+{name:"Peter Champe",rank:5,points:103},{name:"Bob Tawa",rank:6,points:94},
+{name:"Lorne Noble",rank:7,points:86},{name:"JD Tulloch",rank:8,points:86},
+{name:"Yash Chandak",rank:9,points:86},{name:"Phil Astras",rank:10,points:79},
+{name:"Oscar Castillo",rank:11,points:79},{name:"Brent Nelson",rank:12,points:78},
+{name:"Ming Cai",rank:13,points:72},{name:"Gaurav Kukreja",rank:14,points:71},
+{name:"Dave Corujo",rank:15,points:69},{name:"Paul Dingus",rank:16,points:67},
+{name:"Ricardo Yunis",rank:17,points:63},{name:"Dez Nagle",rank:18,points:60},
+{name:"Darren Berns",rank:19,points:60},{name:"James Atwell",rank:20,points:56},
+{name:"Ben Thengvall",rank:21,points:55},{name:"Patrick Elliott",rank:22,points:51},
+{name:"Dan Brenner",rank:23,points:51},{name:"Aaron Schacht",rank:24,points:49},
+{name:"Brent Schmierbach",rank:25,points:49},{name:"Bryan Alcorn",rank:26,points:48},
+{name:"Aaron Pattillo",rank:27,points:47},{name:"Colin Clarkin",rank:28,points:46},
+{name:"Duncan Rover",rank:29,points:45},{name:"Ryan Draves",rank:30,points:43},
+{name:"Michael Voecks",rank:31,points:33},{name:"Jeff Park",rank:32,points:22},
+{name:"Saied Delagah",rank:33,points:19}
+]},
+{ week: 6, label: "Week 6 (Final)", standings: [
+{name:"Victor Casler",rank:1,points:165},{name:"Jason Eckstein",rank:2,points:128},
+{name:"Jordan Logan",rank:3,points:123},{name:"Peter Champe",rank:4,points:117},
+{name:"Karlston Nasser",rank:5,points:115},{name:"Yash Chandak",rank:6,points:106},
+{name:"Brent Nelson",rank:7,points:102},{name:"Phil Astras",rank:8,points:101},
+{name:"Bob Tawa",rank:9,points:100},{name:"Lorne Noble",rank:10,points:98},
+{name:"Ricardo Yunis",rank:11,points:98},{name:"Dez Nagle",rank:12,points:93},
+{name:"JD Tulloch",rank:13,points:90},{name:"Paul Dingus",rank:14,points:88},
+{name:"Aaron Pattillo",rank:15,points:88},{name:"Dave Corujo",rank:16,points:83},
+{name:"Oscar Castillo",rank:17,points:79},{name:"Ming Cai",rank:18,points:72},
+{name:"Duncan Rover",rank:19,points:77},{name:"James Atwell",rank:20,points:75},
+{name:"Gaurav Kukreja",rank:21,points:73},{name:"Darren Berns",rank:22,points:73},
+{name:"Ben Thengvall",rank:23,points:71},{name:"Colin Clarkin",rank:24,points:66},
+{name:"Bryan Alcorn",rank:25,points:62},{name:"Patrick Elliott",rank:26,points:60},
+{name:"Dan Brenner",rank:27,points:51},{name:"Aaron Schacht",rank:28,points:49},
+{name:"Brent Schmierbach",rank:29,points:49},{name:"Jeff Park",rank:30,points:48},
+{name:"Ryan Draves",rank:31,points:45},{name:"Michael Voecks",rank:32,points:39},
+{name:"Saied Delagah",rank:33,points:19}
 ]},
 ];
 
@@ -205,36 +228,64 @@ const MATCHES = [
 {week:4,type:"assigned",p1:"Ben Thengvall",p2:"Brent Schmierbach",winner:"Ben Thengvall",score:"6-2, 7-6"},
 {week:4,type:"assigned",p1:"Saied Delagah",p2:"Paul Dingus",winner:"Paul Dingus",score:"6-1, 6-0"},
 {week:4,type:"assigned",p1:"Colin Clarkin",p2:"Peter McIntosh",winner:"Colin Clarkin",score:"w/o"},
+{week:4,type:"assigned",p1:"Oscar Castillo",p2:"Darren Berns",winner:"Oscar Castillo",score:"6-2, 2-6, 1-0"},
+{week:4,type:"assigned",p1:"Karlston Nasser",p2:"Bob Tawa",winner:"Karlston Nasser",score:"6-3, 6-3"},
+{week:4,type:"assigned",p1:"Gaurav Kukreja",p2:"Jeff Park",winner:"Gaurav Kukreja",score:"6-3, 6-1"},
+{week:4,type:"assigned",p1:"Duncan Rover",p2:"Yash Chandak",winner:"Yash Chandak",score:"6-0, 6-0"},
 {week:4,type:"challenge",p1:"Jordan Logan",p2:"Dez Nagle",winner:"Jordan Logan",score:"6-0, 6-0"},
 {week:4,type:"challenge",p1:"Peter Champe",p2:"Victor Casler",winner:"Victor Casler",score:"6-3, 1-6, 6-3"},
 {week:4,type:"challenge",p1:"Colin Clarkin",p2:"Paul Dingus",winner:"Paul Dingus",score:"6-3, 4-6, 1-0"},
+// ── WEEK 5 ──
+{week:5,type:"assigned",p1:"Victor Casler",p2:"Jordan Logan",winner:"Victor Casler",score:"6-4, 6-4"},
+{week:5,type:"assigned",p1:"Jason Eckstein",p2:"Karlston Nasser",winner:"Jason Eckstein",score:"6-2, 6-3"},
+{week:5,type:"assigned",p1:"Peter Champe",p2:"Bob Tawa",winner:"Peter Champe",score:"6-4, 6-2"},
+{week:5,type:"assigned",p1:"Lorne Noble",p2:"JD Tulloch",winner:"JD Tulloch",score:"7-5, 2-6, 1-0"},
+{week:5,type:"assigned",p1:"Brent Nelson",p2:"Ming Cai",winner:"Brent Nelson",score:"5-7, 6-4, 1-0"},
+{week:5,type:"assigned",p1:"Phil Astras",p2:"Dez Nagle",winner:"Phil Astras",score:"6-4, 6-1"},
+{week:5,type:"assigned",p1:"Paul Dingus",p2:"Dave Corujo",winner:"Dave Corujo",score:"4-6, 6-0, 1-0"},
+{week:5,type:"assigned",p1:"Yash Chandak",p2:"Darren Berns",winner:"Yash Chandak",score:"3-6, 6-3, 1-0"},
+{week:5,type:"assigned",p1:"Ricardo Yunis",p2:"Gaurav Kukreja",winner:"Ricardo Yunis",score:"6-3, 6-3"},
+{week:5,type:"assigned",p1:"Oscar Castillo",p2:"Aaron Schacht",winner:"Oscar Castillo",score:"7-5, 6-2"},
+{week:5,type:"assigned",p1:"Patrick Elliott",p2:"James Atwell",winner:"James Atwell",score:"2-6, 6-4, 1-0"},
+{week:5,type:"assigned",p1:"Ben Thengvall",p2:"Paul Dingus",winner:"Ben Thengvall",score:"6-4, 7-6"},
+{week:5,type:"assigned",p1:"Ryan Draves",p2:"Dan Brenner",winner:"Dan Brenner",score:"4-6, 6-0, 1-0"},
+{week:5,type:"assigned",p1:"Colin Clarkin",p2:"Bryan Alcorn",winner:"Bryan Alcorn",score:"4-6, 6-3, 6-3"},
+{week:5,type:"assigned",p1:"Michael Voecks",p2:"Brent Schmierbach",winner:"Brent Schmierbach",score:"6-1, 6-3"},
+{week:5,type:"assigned",p1:"Jeff Park",p2:"Saied Delagah",winner:"Jeff Park",score:"6-0, 6-0"},
+{week:5,type:"assigned",p1:"Aaron Pattillo",p2:"Duncan Rover",winner:"Aaron Pattillo",score:"4-6, 6-3, 1-0"},
+// ── WEEK 6 ──
+{week:6,type:"assigned",p1:"Victor Casler",p2:"Karlston Nasser",winner:"Victor Casler",score:"6-3, 6-4"},
+{week:6,type:"assigned",p1:"Jason Eckstein",p2:"Jordan Logan",winner:"Jordan Logan",score:"7-6, 6-1"},
+{week:6,type:"assigned",p1:"Peter Champe",p2:"Lorne Noble",winner:"Peter Champe",score:"6-7, 7-5, 1-0"},
+{week:6,type:"assigned",p1:"Bob Tawa",p2:"Yash Chandak",winner:"Yash Chandak",score:"6-3, 6-3"},
+{week:6,type:"assigned",p1:"JD Tulloch",p2:"Phil Astras",winner:"Phil Astras",score:"6-3, 6-1"},
+{week:6,type:"assigned",p1:"Brent Nelson",p2:"Gaurav Kukreja",winner:"Brent Nelson",score:"6-2, 6-0"},
+{week:6,type:"assigned",p1:"Dave Corujo",p2:"Ricardo Yunis",winner:"Dave Corujo",score:"7-6, 4-6, 1-0"},
+{week:6,type:"assigned",p1:"Paul Dingus",p2:"Dez Nagle",winner:"Paul Dingus",score:"6-0, 7-5"},
+{week:6,type:"assigned",p1:"Darren Berns",p2:"James Atwell",winner:"James Atwell",score:"7-5, 6-2"},
+{week:6,type:"assigned",p1:"Ben Thengvall",p2:"Patrick Elliott",winner:"Ben Thengvall",score:"5-7, 6-3, 1-0"},
+{week:6,type:"assigned",p1:"Brent Schmierbach",p2:"Bryan Alcorn",winner:"Bryan Alcorn",score:"w/o"},
+{week:6,type:"assigned",p1:"Aaron Pattillo",p2:"Ryan Draves",winner:"Aaron Pattillo",score:"6-1, 6-1"},
+{week:6,type:"assigned",p1:"Colin Clarkin",p2:"Michael Voecks",winner:"Colin Clarkin",score:"6-2, 6-4"},
+{week:6,type:"assigned",p1:"Duncan Rover",p2:"Saied Delagah",winner:"Duncan Rover",score:"6-3, 6-0"},
+// Castillo vs Cai: did not play (0-0); Brenner vs Schacht: did not play (0-0)
+{week:6,type:"challenge",p1:"Ricardo Yunis",p2:"Dez Nagle",winner:"Ricardo Yunis",score:"6-1, 5-7, 1-0"},
+{week:6,type:"challenge",p1:"Victor Casler",p2:"Jason Eckstein",winner:"Victor Casler",score:"7-6, 3-6, 1-0"},
+{week:6,type:"challenge",p1:"Dez Nagle",p2:"Darren Berns",winner:"Dez Nagle",score:"6-2, 6-4"},
 ];
 
-const WEEK4_ASSIGNMENTS = [
-["Karlston Nasser","Bob Tawa"],["Peter Champe","Jason Eckstein"],
-["Victor Casler","Phil Astras"],["Lorne Noble","Ming Cai"],
-["JD Tulloch","Dez Nagle"],["Jordan Logan","Dave Corujo"],
-["Duncan Rover","Yash Chandak"],["Darren Berns","Oscar Castillo"],
-["Brent Nelson","James Atwell"],["Ricardo Yunis","Aaron Pattillo"],
-["Dan Brenner","Bryan Alcorn"],["Ryan Draves","Patrick Elliott"],
-["Michael Voecks","Aaron Schacht"],["Ben Thengvall","Brent Schmierbach"],
-["Gaurav Kukreja","Jeff Park"],["Saied Delagah","Paul Dingus"],
-["Colin Clarkin","Peter McIntosh"]
+const WEEK6_ASSIGNMENTS = [
+["Victor Casler","Karlston Nasser"],["Jason Eckstein","Jordan Logan"],
+["Peter Champe","Lorne Noble"],["Bob Tawa","Yash Chandak"],
+["JD Tulloch","Phil Astras"],["Oscar Castillo","Ming Cai"],
+["Brent Nelson","Gaurav Kukreja"],["Dave Corujo","Ricardo Yunis"],
+["Paul Dingus","Dez Nagle"],["Darren Berns","James Atwell"],
+["Ben Thengvall","Patrick Elliott"],["Dan Brenner","Aaron Schacht"],
+["Brent Schmierbach","Bryan Alcorn"],["Aaron Pattillo","Ryan Draves"],
+["Colin Clarkin","Michael Voecks"],["Duncan Rover","Saied Delagah"]
 ];
 
-const WEEK5_ASSIGNMENTS = [
-["Victor Casler","Jordan Logan"],["Jason Eckstein","Karlston Nasser"],
-["Peter Champe","Bob Tawa"],["Lorne Noble","JD Tulloch"],
-["Brent Nelson","Ming Cai"],["Phil Astras","Dez Nagle"],
-["Paul Dingus","Dave Corujo"],["Aaron Pattillo","Duncan Rover"],
-["Yash Chandak","Darren Berns"],["Ricardo Yunis","Gaurav Kukreja"],
-["Oscar Castillo","Aaron Schacht"],["Patrick Elliott","James Atwell"],
-["Ben Thengvall","Paul Dingus"],["Ryan Draves","Dan Brenner"],
-["Colin Clarkin","Bryan Alcorn"],["Michael Voecks","Brent Schmierbach"],
-["Saied Delagah","Jeff Park"]
-];
-
-const CURRENT_WEEK = 5;
+const CURRENT_WEEK = 6;
 
 // ─── UTILITIES ───────────────────────────────────────────────
 
@@ -245,8 +296,6 @@ return { week: ws.week, label: ws.label, rank: entry ? entry.rank : null, points
 }).filter(r => r.rank !== null);
 }
 
-// Rank history computed from assigned matches only (true ladder rank, excluding challenges)
-// Players who didn't play in a given week carry forward 0 new pts -- correct behavior
 function getRankHistoryAssigned(playerName) {
 const weeksWithData = [...new Set(MATCHES.filter(m => m.type === "assigned").map(m => m.week))].sort();
 return weeksWithData.map(w => {
@@ -295,7 +344,6 @@ matches.forEach(m => { if (m.winner === playerName) w++; else l++; });
 return { wins: w, losses: l, total: w + l };
 }
 
-// Same as getRecordByType but capped at a given week (through that week)
 function getRecordByTypeThruWeek(playerName, type, thruWeek) {
 const matches = MATCHES.filter(m =>
 m.week <= thruWeek &&
@@ -307,7 +355,6 @@ matches.forEach(m => { if (m.winner === playerName) w++; else l++; });
 return { wins: w, losses: l, total: w + l };
 }
 
-// Challenge count through a given week
 function getChallengeCountThruWeek(playerName, thruWeek) {
 return MATCHES.filter(m =>
 m.week <= thruWeek &&
@@ -316,7 +363,6 @@ m.type === "challenge" &&
 ).length;
 }
 
-// Points a player earned in a specific week, filtered by match type
 function getWeeklyPoints(playerName, week, matchTypeFilter) {
 const matches = MATCHES.filter(m =>
 m.week === week &&
@@ -331,40 +377,14 @@ pts += m.winner === playerName ? winnerPts : loserPts;
 return pts;
 }
 
-// Scoring formula: only first 2 sets count. Scores are from winner's perspective.
-// Winner = 26 - loser's games in first 2 sets. Loser = their games in first 2 sets.
 function computeMatchPoints(match) {
 if (match.score === "w/o") return { winnerPts: 12, loserPts: 0 };
 const sets = match.score.split(", ").map(s => {
 const parts = s.replace(/\s*\(.*\)/, "").split("-").map(Number);
 return parts;
 });
-// Only first 2 sets; second number = loser's games (scores from winner's perspective)
 const loserGames = sets.slice(0, 2).reduce((sum, [a, b]) => sum + b, 0);
 return { winnerPts: 26 - loserGames, loserPts: loserGames };
-}
-
-function computePointStandings(matchTypeFilter) {
-const filtered = matchTypeFilter === "all"
-? MATCHES
-: MATCHES.filter(m => m.type === matchTypeFilter);
-const points = {};
-const records = {};
-PLAYERS.forEach(p => { points[p] = 0; records[p] = { wins: 0, losses: 0 }; });
-filtered.forEach(match => {
-const { winnerPts, loserPts } = computeMatchPoints(match);
-const loser = match.winner === match.p1 ? match.p2 : match.p1;
-points[match.winner] = (points[match.winner] || 0) + winnerPts;
-points[loser] = (points[loser] || 0) + loserPts;
-if (!records[match.winner]) records[match.winner] = { wins: 0, losses: 0 };
-if (!records[loser]) records[loser] = { wins: 0, losses: 0 };
-records[match.winner].wins++;
-records[loser].losses++;
-});
-const sorted = Object.entries(points)
-.map(([name, pts]) => ({ name, points: pts, ...records[name] }))
-.sort((a, b) => b.points - a.points || a.name.localeCompare(b.name));
-return sorted.map((s, i) => ({ ...s, rank: i + 1 }));
 }
 
 // ─── SPARKLINE ──────────────────────────────────────────────
@@ -426,185 +446,6 @@ return <g key={r}><line x1={PAD.l} x2={W-PAD.r} y1={y} y2={y} stroke="#ddd" stro
 );
 }
 
-// ─── SCORE REPORT FORM ──────────────────────────────────────
-
-function ScoreReportForm() {
-const [matchType, setMatchType] = useState("assigned");
-const [selectedMatch, setSelectedMatch] = useState("");
-const [challengeP1, setChallengeP1] = useState("");
-const [challengeP2, setChallengeP2] = useState("");
-const [set1a, setSet1a] = useState(""); const [set1b, setSet1b] = useState("");
-const [set2a, setSet2a] = useState(""); const [set2b, setSet2b] = useState("");
-const [set3a, setSet3a] = useState(""); const [set3b, setSet3b] = useState("");
-const [set3type, setSet3type] = useState("set");
-const [winner, setWinner] = useState("");
-const [walkover, setWalkover] = useState(false);
-const [sent, setSent] = useState(false);
-
-const currentAssignment = selectedMatch !== "" ? WEEK5_ASSIGNMENTS[parseInt(selectedMatch)] : null;
-const p1Name = matchType === "assigned" ? currentAssignment?.[0] : challengeP1;
-const p2Name = matchType === "assigned" ? currentAssignment?.[1] : challengeP2;
-const currentPlayers = WEEK_STANDINGS[4].standings.map(s => s.name);
-
-const scoreString = walkover ? "w/o" : [
-set1a && set1b ? `${set1a}-${set1b}` : null,
-set2a && set2b ? `${set2a}-${set2b}` : null,
-set3a && set3b ? `${set3a}-${set3b}${set3type === "tb10" ? " (10-pt TB)" : ""}` : null,
-].filter(Boolean).join(", ");
-
-const isValid = p1Name && p2Name && winner && (walkover || (set1a && set1b && set2a && set2b));
-
-const buildMailto = () => {
-const typeLabel = matchType === "challenge" ? "CHALLENGE " : "";
-const subject = encodeURIComponent(`3.5 Ladder - Week 5 ${typeLabel}Score: ${p1Name} vs ${p2Name}`);
-const winnerName = winner === "p1" ? p1Name : p2Name;
-const body = encodeURIComponent(
-`Hi Kathy,\n\nReporting our Week 5 ${typeLabel}match result:\n\n` +
-`${p1Name} vs ${p2Name}\n` +
-`Score: ${scoreString}\n` +
-`Winner: ${winnerName}\n\nThanks!`
-);
-const p1Email = PLAYER_DIRECTORY[p1Name]?.email || "";
-const p2Email = PLAYER_DIRECTORY[p2Name]?.email || "";
-const ccList = [p1Email, p2Email].filter(Boolean).join(",");
-const ccParam = ccList ? `&cc=${encodeURIComponent(ccList)}` : "";
-return `mailto:${KATHY_EMAIL}?subject=${subject}${ccParam}&body=${body}`;
-};
-
-const inp = { padding:"8px 12px",fontSize:14,border:"1px solid #d6d3d1",borderRadius:8,outline:"none",background:"#fff",width:"100%",boxSizing:"border-box" };
-const sel = { ...inp, appearance:"auto" };
-const lbl = { fontSize:12,fontWeight:600,color:"#57534e",display:"block",marginBottom:4 };
-const sci = { ...inp,width:52,textAlign:"center",padding:"8px 4px",fontSize:18,fontWeight:700,fontFamily:"'SF Mono',monospace" };
-const resetForm = () => { setSent(false); setSelectedMatch(""); setWinner(""); setSet1a(""); setSet1b(""); setSet2a(""); setSet2b(""); setSet3a(""); setSet3b(""); setWalkover(false); setChallengeP1(""); setChallengeP2(""); };
-
-if (sent) return (
-<div style={{textAlign:"center",padding:"40px 20px"}}>
-<div style={{fontSize:48,marginBottom:12}}>&#9989;</div>
-<h3 style={{margin:"0 0 8px",fontSize:18,fontWeight:700}}>Email Ready!</h3>
-<p style={{fontSize:13,color:"#78716c",margin:"0 0 20px"}}>Your email client should have opened with the score pre-filled. Just hit send.</p>
-<button onClick={resetForm} style={{padding:"8px 20px",fontSize:13,background:"#1a472a",color:"#fff",border:"none",borderRadius:8,cursor:"pointer",fontWeight:600}}>Report Another Score</button>
-</div>
-);
-
-return (
-<div style={{display:"flex",flexDirection:"column",gap:16}}>
-{/* Match Type */}
-<div>
-<label style={lbl}>Match Type</label>
-<div style={{display:"flex",gap:0,borderRadius:8,overflow:"hidden",border:"1px solid #d6d3d1"}}>
-{[{id:"assigned",label:"Assigned Match"},{id:"challenge",label:"Challenge Match"}].map(t => (
-<button key={t.id} onClick={() => { setMatchType(t.id); setSelectedMatch(""); setWinner(""); setChallengeP1(""); setChallengeP2(""); }}
-style={{flex:1,padding:"8px 12px",fontSize:13,fontWeight:matchType===t.id?700:400,background:matchType===t.id?"#1a472a":"#fff",color:matchType===t.id?"#fff":"#44403c",border:"none",cursor:"pointer"}}>{t.label}</button>
-))}
-</div>
-</div>
-{/* Match Selection */}
-{matchType === "assigned" ? (
-<div>
-<label style={lbl}>Select Your Match</label>
-<select value={selectedMatch} onChange={e => { setSelectedMatch(e.target.value); setWinner(""); }} style={sel}>
-<option value="">Choose match...</option>
-{WEEK5_ASSIGNMENTS.map(([a,b], i) => <option key={i} value={i}>{a} vs {b}</option>)}
-</select>
-</div>
-) : (
-<div style={{display:"flex",gap:12}}>
-<div style={{flex:1}}>
-<label style={lbl}>Challenger</label>
-<select value={challengeP1} onChange={e => { setChallengeP1(e.target.value); setWinner(""); }} style={sel}>
-<option value="">Select player...</option>
-{currentPlayers.map(p => <option key={p} value={p}>{p}</option>)}
-</select>
-</div>
-<div style={{flex:1}}>
-<label style={lbl}>Opponent</label>
-<select value={challengeP2} onChange={e => { setChallengeP2(e.target.value); setWinner(""); }} style={sel}>
-<option value="">Select player...</option>
-{currentPlayers.filter(p => p !== challengeP1).map(p => <option key={p} value={p}>{p}</option>)}
-</select>
-</div>
-</div>
-)}
-{/* Walkover */}
-{(p1Name && p2Name) && (
-<label style={{display:"flex",alignItems:"center",gap:8,fontSize:13,cursor:"pointer",color:"#57534e"}}>
-<input type="checkbox" checked={walkover} onChange={e => setWalkover(e.target.checked)} style={{width:16,height:16,accentColor:"#1a472a"}}/>
-Walkover (opponent didn't show / withdrew)
-</label>
-)}
-{/* Scores */}
-{(p1Name && p2Name && !walkover) && (
-<div>
-<label style={lbl}>Score</label>
-<div style={{display:"flex",flexDirection:"column",gap:8}}>
-<div style={{display:"grid",gridTemplateColumns:"80px 52px 20px 52px",gap:8,alignItems:"center",fontSize:11,fontWeight:600,color:"#a8a29e"}}>
-<span></span><span style={{textAlign:"center"}}>{p1Name.split(" ").pop()}</span><span></span><span style={{textAlign:"center"}}>{p2Name.split(" ").pop()}</span>
-</div>
-{/* Set 1 */}
-<div style={{display:"grid",gridTemplateColumns:"80px 52px 20px 52px",gap:8,alignItems:"center"}}>
-<span style={{fontSize:12,fontWeight:600,color:"#57534e"}}>Set 1</span>
-<input type="number" min="0" max="7" value={set1a} onChange={e => setSet1a(e.target.value)} style={sci}/>
-<span style={{textAlign:"center",color:"#d6d3d1",fontWeight:700}}>:</span>
-<input type="number" min="0" max="7" value={set1b} onChange={e => setSet1b(e.target.value)} style={sci}/>
-</div>
-{/* Set 2 */}
-<div style={{display:"grid",gridTemplateColumns:"80px 52px 20px 52px",gap:8,alignItems:"center"}}>
-<span style={{fontSize:12,fontWeight:600,color:"#57534e"}}>Set 2</span>
-<input type="number" min="0" max="7" value={set2a} onChange={e => setSet2a(e.target.value)} style={sci}/>
-<span style={{textAlign:"center",color:"#d6d3d1",fontWeight:700}}>:</span>
-<input type="number" min="0" max="7" value={set2b} onChange={e => setSet2b(e.target.value)} style={sci}/>
-</div>
-{/* Set 3 / TB */}
-<div style={{display:"grid",gridTemplateColumns:"80px 52px 20px 52px",gap:8,alignItems:"center"}}>
-<select value={set3type} onChange={e => setSet3type(e.target.value)}
-style={{fontSize:11,border:"1px solid #d6d3d1",borderRadius:4,padding:"2px 4px",background:"#fff",color:"#57534e"}}>
-<option value="set">Set 3</option>
-<option value="tb10">10-pt TB</option>
-</select>
-<input type="number" min="0" max={set3type==="tb10"?"15":"7"} value={set3a} onChange={e => setSet3a(e.target.value)} style={sci} placeholder="-"/>
-<span style={{textAlign:"center",color:"#d6d3d1",fontWeight:700}}>:</span>
-<input type="number" min="0" max={set3type==="tb10"?"15":"7"} value={set3b} onChange={e => setSet3b(e.target.value)} style={sci} placeholder="-"/>
-</div>
-</div>
-</div>
-)}
-{/* Winner */}
-{(p1Name && p2Name) && (
-<div>
-<label style={lbl}>Winner</label>
-<div style={{display:"flex",gap:8}}>
-{[{id:"p1",name:p1Name},{id:"p2",name:p2Name}].map(opt => (
-<button key={opt.id} onClick={() => setWinner(opt.id)}
-style={{flex:1,padding:"10px 12px",fontSize:13,fontWeight:winner===opt.id?700:400,
-background:winner===opt.id?"#f0fdf4":"#fff",color:winner===opt.id?"#16a34a":"#44403c",
-border:winner===opt.id?"2px solid #16a34a":"1px solid #d6d3d1",borderRadius:8,cursor:"pointer",transition:"all 0.1s"}}>
-{winner===opt.id && "\u2713 "}{opt.name}
-</button>
-))}
-</div>
-</div>
-)}
-{/* Preview */}
-{isValid && (
-<div style={{background:"#f5f5f4",borderRadius:8,padding:12,fontSize:13,color:"#44403c",lineHeight:1.6}}>
-<div style={{fontWeight:600,marginBottom:4,fontSize:11,color:"#a8a29e",textTransform:"uppercase"}}>Email Preview</div>
-<div><strong>To:</strong> {KATHY_EMAIL}</div>
-<div><strong>Subject:</strong> 3.5 Ladder - Week 5 {matchType==="challenge"?"CHALLENGE ":""}Score: {p1Name} vs {p2Name}</div>
-<div style={{marginTop:8}}>{p1Name} vs {p2Name}<br/>Score: {scoreString}<br/>Winner: {winner === "p1" ? p1Name : p2Name}</div>
-</div>
-)}
-<a href={isValid ? buildMailto() : undefined} onClick={() => { if (isValid) setSent(true); }}
-style={{display:"block",textAlign:"center",padding:"12px 20px",fontSize:14,fontWeight:700,
-background:isValid?"#1a472a":"#d6d3d1",color:isValid?"#fff":"#a8a29e",
-border:"none",borderRadius:10,cursor:isValid?"pointer":"not-allowed",textDecoration:"none",
-transition:"all 0.15s",pointerEvents:isValid?"auto":"none"}}>
-Open in Email &rarr;
-</a>
-<p style={{fontSize:11,color:"#a8a29e",textAlign:"center",margin:0}}>Opens your email client with the score pre-filled. You and your opponent will be CC'd if emails are on file.</p>
-</div>
-);
-}
-
 // ─── MAIN APP ────────────────────────────────────────────────
 
 export default function TennisLadderTracker() {
@@ -633,7 +474,6 @@ return prev.rank - curr.rank;
 };
 
 const playerDetail = selectedPlayer ? (() => {
-// Compute assigned-only rank and points from MATCHES (excludes challenges)
 const assignedPts = {};
 PLAYERS.forEach(p => { assignedPts[p] = 0; });
 MATCHES.filter(m => m.type === "assigned").forEach(m => {
@@ -670,15 +510,9 @@ return list.filter(p => p.name.toLowerCase().includes(dirSearch.toLowerCase()));
 const TABS = [
 {id:"standings",label:"Standings"},
 {id:"results",label:"Results"},
-{id:"week5",label:"This Week"},
-{id:"report",label:"Report Score"},
 {id:"directory",label:"Players"},
 {id:"stats",label:"Stats"}
 ];
-
-const currentWeekAssignments = WEEK5_ASSIGNMENTS;
-const currentWeekLabel = "Week 5";
-const currentWeekDue = "Wednesday, April 8 by 8:00pm";
 
 return (
 <div style={{fontFamily:"'Instrument Sans','SF Pro Display',-apple-system,sans-serif",maxWidth:800,margin:"0 auto",background:"#fafaf9",minHeight:"100vh",color:"#1c1917"}}>
@@ -688,8 +522,12 @@ return (
 <span style={{fontSize:28}}>&#127934;</span>
 <div>
 <h1 style={{margin:0,fontSize:22,fontWeight:700,letterSpacing:"-0.02em"}}>Spring 2026 Ladder</h1>
-<p style={{margin:0,fontSize:12,opacity:0.75,marginTop:2}}>Men's 3.5 Singles &middot; Feb 25 - Apr 22 &middot; {CURRENT_WEEK === 5 ? "33" : "36"} Players</p>
+<p style={{margin:0,fontSize:12,opacity:0.75,marginTop:2}}>Men's 3.5 Singles &middot; Feb 25 - Apr 22 &middot; 33 Players</p>
 </div>
+</div>
+<div style={{background:"rgba(255,255,255,0.12)",borderRadius:8,padding:"8px 12px",marginTop:10,fontSize:12,display:"flex",alignItems:"center",gap:8}}>
+<span style={{fontSize:16}}>&#127942;</span>
+<span><strong>Season Complete</strong> &middot; Victor Casler wins the ladder! Thanks for a great season.</span>
 </div>
 <div style={{display:"flex",gap:4,marginTop:14,flexWrap:"wrap"}}>
 {TABS.map(tab => (
@@ -766,7 +604,6 @@ padding:"1px 5px",borderRadius:4}}>{m.type === "challenge" ? "CH" : "ASN"}</span
 const displayList = standingsMode === "all"
 ? filteredStandings
 : (() => {
-// Compute assigned-only standings from MATCHES through selectedWeek
 const pts = {};
 PLAYERS.forEach(p => { pts[p] = 0; });
 MATCHES.filter(m => m.week <= selectedWeek && m.type === "assigned").forEach(m => {
@@ -787,20 +624,18 @@ return list;
 
 return (
 <>
-{/* Week selector + search */}
 <div style={{display:"flex",gap:8,marginBottom:8,alignItems:"center",flexWrap:"wrap"}}>
 {WEEK_STANDINGS.map(ws => (
 <button key={ws.week} onClick={() => setSelectedWeek(ws.week)}
 style={{padding:"5px 12px",fontSize:12,fontWeight:selectedWeek===ws.week?700:400,
 background:selectedWeek===ws.week?"#1a472a":"#fff",color:selectedWeek===ws.week?"#fff":"#44403c",
 border:"1px solid #d6d3d1",borderRadius:16,cursor:"pointer"}}>
-Wk {ws.week}
+{ws.week === 6 ? "Final" : `Wk ${ws.week}`}
 </button>
 ))}
 <input type="text" placeholder="Search player..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)}
 style={{marginLeft:"auto",padding:"5px 12px",fontSize:12,border:"1px solid #d6d3d1",borderRadius:16,outline:"none",width:140,background:"#fff"}}/>
 </div>
-{/* Assigned vs All toggle */}
 <div style={{display:"flex",gap:0,borderRadius:8,overflow:"hidden",border:"1px solid #d6d3d1",marginBottom:12}}>
 {[{id:"assigned",label:"Official Standings (Assigned)"},{id:"all",label:"All Matches (incl Challenges)"}].map(t => (
 <button key={t.id} onClick={() => setStandingsMode(t.id)}
@@ -826,7 +661,6 @@ Includes challenge matches. Official ladder prize is based on assigned matches o
 const change = getRankChange(s.name);
 const chCount = getChallengeCountThruWeek(s.name, selectedWeek);
 const wkPts = getWeeklyPoints(s.name, selectedWeek, "all");
-const rec = getRecordByTypeThruWeek(s.name, "all", selectedWeek);
 return (
 <div key={s.name} onClick={() => setSelectedPlayer(s.name)}
 style={{display:"grid",gridTemplateColumns:"42px 1fr 55px 50px 50px 90px",padding:"10px 12px",fontSize:13,cursor:"pointer",alignItems:"center",
@@ -853,7 +687,7 @@ onMouseLeave={e => { e.currentTarget.style.background="transparent"; }}>
 <div style={{display:"grid",gridTemplateColumns:"42px 1fr 55px 50px 80px",padding:"8px 12px",fontSize:11,fontWeight:600,color:"#a8a29e",borderBottom:"1px solid #e7e5e4",textTransform:"uppercase",letterSpacing:"0.05em"}}>
 <span>#</span><span>Player</span><span>Total</span><span>+Wk</span><span>Record</span>
 </div>
-{displayList.map((s, idx) => {
+{displayList.map((s) => {
 const wkPts = getWeeklyPoints(s.name, selectedWeek, "assigned");
 return (
 <div key={s.name} onClick={() => setSelectedPlayer(s.name)}
@@ -878,8 +712,7 @@ onMouseLeave={e => { e.currentTarget.style.background="transparent"; }}>
 
 {/* Results */}
 {view === "results" && !selectedPlayer && (() => {
-const maxWeekWithResults = 4;
-const wk = Math.min(selectedWeek, maxWeekWithResults);
+const wk = selectedWeek;
 const weekMatches = MATCHES.filter(m => m.week === wk);
 const assignedMatches = weekMatches.filter(m => m.type === "assigned");
 const challengeMatches = weekMatches.filter(m => m.type === "challenge");
@@ -900,18 +733,16 @@ borderBottom:!isLast?"1px solid #f5f5f4":"none",fontSize:13}}>
 
 return (
 <>
-{/* Week selector */}
-<div style={{display:"flex",gap:8,marginBottom:8}}>
-{[1,2,3,4].map(w => (
+<div style={{display:"flex",gap:8,marginBottom:8,flexWrap:"wrap"}}>
+{[1,2,3,4,5,6].map(w => (
 <button key={w} onClick={() => setSelectedWeek(w)}
 style={{padding:"5px 12px",fontSize:12,fontWeight:selectedWeek===w?700:400,
 background:selectedWeek===w?"#1a472a":"#fff",color:selectedWeek===w?"#fff":"#44403c",
 border:"1px solid #d6d3d1",borderRadius:16,cursor:"pointer"}}>
-Wk {w}
+{w === 6 ? "Final" : `Wk ${w}`}
 </button>
 ))}
 </div>
-{/* Match type filter */}
 <div style={{display:"flex",gap:0,borderRadius:8,overflow:"hidden",border:"1px solid #d6d3d1",marginBottom:12}}>
 {[{id:"all",label:"All Matches"},{id:"assigned",label:"Assigned"},{id:"challenge",label:`Challenges${challengeMatches.length?` (${challengeMatches.length})`:""}`}].map(t => (
 <button key={t.id} onClick={() => setResultFilter(t.id)}
@@ -922,7 +753,6 @@ border:"none",cursor:"pointer",transition:"all 0.15s"}}>
 </button>
 ))}
 </div>
-{/* Assigned matches */}
 {showAssigned && assignedMatches.length > 0 && (
 <div style={{background:"#fff",borderRadius:12,border:"1px solid #e7e5e4",padding:16,marginBottom:challengeMatches.length > 0 && showChallenge ? 12 : 0}}>
 <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12}}>
@@ -930,9 +760,13 @@ border:"none",cursor:"pointer",transition:"all 0.15s"}}>
 <span style={{fontSize:11,background:"#e7e5e4",color:"#57534e",padding:"2px 8px",borderRadius:10}}>{assignedMatches.length}</span>
 </div>
 {assignedMatches.map((m, i) => <MatchRow key={i} m={m} i={i} isLast={i === assignedMatches.length - 1}/>)}
+{wk === 6 && (
+<div style={{marginTop:12,padding:"8px 0",borderTop:"1px solid #f5f5f4",fontSize:12,color:"#a8a29e",fontStyle:"italic"}}>
+Not played: Castillo vs Cai, Brenner vs Schacht. Jeff Park had a bye.
 </div>
 )}
-{/* Points summary for the week */}
+</div>
+)}
 {showAssigned && resultFilter === "assigned" && assignedMatches.length > 0 && (() => {
 const ptsSummary = {};
 weekMatches.filter(m => m.type === "assigned").forEach(m => {
@@ -944,7 +778,7 @@ ptsSummary[loser] = (ptsSummary[loser] || 0) + loserPts;
 const sorted = Object.entries(ptsSummary).sort(([,a],[,b]) => b - a);
 return (
 <div style={{background:"#fff",borderRadius:12,border:"1px solid #e7e5e4",padding:16,marginBottom:12}}>
-<h3 style={{margin:"0 0 12px",fontSize:15,fontWeight:700}}>Week {wk} Points Awarded — Assigned Matches</h3>
+<h3 style={{margin:"0 0 12px",fontSize:15,fontWeight:700}}>Week {wk} Points Awarded — Assigned</h3>
 <div style={{display:"flex",flexDirection:"column"}}>
 {sorted.map(([name, pts], i) => (
 <div key={name} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"6px 0",borderBottom:i<sorted.length-1?"1px solid #f5f5f4":"none",fontSize:13}}>
@@ -956,7 +790,6 @@ return (
 </div>
 );
 })()}
-{/* Challenge matches */}
 {showChallenge && challengeMatches.length > 0 && (
 <div style={{background:"#fffbeb",borderRadius:12,border:"1px solid #fde68a",padding:16}}>
 <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12}}>
@@ -966,54 +799,6 @@ return (
 {challengeMatches.map((m, i) => <MatchRow key={i} m={m} i={i} isLast={i === challengeMatches.length - 1}/>)}
 </div>
 )}
-{/* Challenge points summary */}
-{showChallenge && resultFilter === "challenge" && challengeMatches.length > 0 && (() => {
-const ptsSummary = {};
-weekMatches.filter(m => m.type === "challenge").forEach(m => {
-const { winnerPts, loserPts } = computeMatchPoints(m);
-const loser = m.winner === m.p1 ? m.p2 : m.p1;
-ptsSummary[m.winner] = (ptsSummary[m.winner] || 0) + winnerPts;
-ptsSummary[loser] = (ptsSummary[loser] || 0) + loserPts;
-});
-const sorted = Object.entries(ptsSummary).sort(([,a],[,b]) => b - a);
-return (
-<div style={{background:"#fffbeb",borderRadius:12,border:"1px solid #fde68a",padding:16,marginTop:12}}>
-<h3 style={{margin:"0 0 12px",fontSize:15,fontWeight:700,color:"#92400e"}}>Week {wk} Points Awarded — Challenges</h3>
-<div style={{display:"flex",flexDirection:"column"}}>
-{sorted.map(([name, pts], i) => (
-<div key={name} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"6px 0",borderBottom:i<sorted.length-1?"1px solid #fde68a":"none",fontSize:13}}>
-<span style={{color:"#1c1917"}}>{name}</span>
-<span style={{fontWeight:700,color:"#1c1917",fontFamily:"'SF Mono',monospace"}}>{pts} pts</span>
-</div>
-))}
-</div>
-</div>
-);
-})()}
-{/* All matches points summary — combined assigned + challenge */}
-{resultFilter === "all" && (assignedMatches.length > 0 || challengeMatches.length > 0) && (() => {
-const ptsSummary = {};
-weekMatches.forEach(m => {
-const { winnerPts, loserPts } = computeMatchPoints(m);
-const loser = m.winner === m.p1 ? m.p2 : m.p1;
-ptsSummary[m.winner] = (ptsSummary[m.winner] || 0) + winnerPts;
-ptsSummary[loser] = (ptsSummary[loser] || 0) + loserPts;
-});
-const sorted = Object.entries(ptsSummary).sort(([,a],[,b]) => b - a);
-return (
-<div style={{background:"#fff",borderRadius:12,border:"1px solid #e7e5e4",padding:16,marginTop:12}}>
-<h3 style={{margin:"0 0 12px",fontSize:15,fontWeight:700}}>Week {wk} Points Awarded — All Matches</h3>
-<div style={{display:"flex",flexDirection:"column"}}>
-{sorted.map(([name, pts], i) => (
-<div key={name} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"6px 0",borderBottom:i<sorted.length-1?"1px solid #f5f5f4":"none",fontSize:13}}>
-<span style={{color:"#1c1917"}}>{name}</span>
-<span style={{fontWeight:700,color:"#1c1917",fontFamily:"'SF Mono',monospace"}}>{pts} pts</span>
-</div>
-))}
-</div>
-</div>
-);
-})()}
 {showChallenge && challengeMatches.length === 0 && resultFilter === "challenge" && (
 <div style={{background:"#fff",borderRadius:12,border:"1px solid #e7e5e4",padding:"32px 16px",textAlign:"center"}}>
 <p style={{fontSize:13,color:"#a8a29e",margin:0}}>No challenge matches were played in Week {wk}.</p>
@@ -1022,48 +807,6 @@ return (
 </>
 );
 })()}
-
-{/* This Week */}
-{view === "week5" && !selectedPlayer && (
-<div style={{background:"#fff",borderRadius:12,border:"1px solid #e7e5e4",padding:16}}>
-<h3 style={{margin:"0 0 4px",fontSize:15,fontWeight:700}}>{currentWeekLabel} Assignments</h3>
-<p style={{margin:"0 0 14px",fontSize:12,color:"#78716c"}}>Scores due {currentWeekDue}</p>
-{(() => {
-// Compute assigned-only standings through Week 4 (the prior week) for rank display
-const pts = {};
-PLAYERS.forEach(p => { pts[p] = 0; });
-MATCHES.filter(m => m.week <= CURRENT_WEEK - 1 && m.type === "assigned").forEach(m => {
-const { winnerPts, loserPts } = computeMatchPoints(m);
-const loser = m.winner === m.p1 ? m.p2 : m.p1;
-pts[m.winner] = (pts[m.winner] || 0) + winnerPts;
-pts[loser] = (pts[loser] || 0) + loserPts;
-});
-const sorted = Object.entries(pts).sort(([,a],[,b]) => b - a || 0);
-const rankMap = Object.fromEntries(sorted.map(([name], i) => [name, i + 1]));
-return currentWeekAssignments.map(([a, b], i) => (
-<div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 12px",borderRadius:8,marginBottom:4,fontSize:13,
-background:i%2===0?"#fafaf9":"#fff",border:"1px solid transparent"}}>
-<div style={{display:"flex",alignItems:"center",gap:8}}>
-<span style={{fontSize:11,color:"#44403c",width:20}}>#{rankMap[a]}</span>
-<span style={{fontWeight:600}}>{a}</span>
-<span style={{color:"#44403c",fontSize:11}}>vs</span>
-<span style={{fontWeight:600}}>{b}</span>
-<span style={{fontSize:11,color:"#44403c"}}>#{rankMap[b]}</span>
-</div>
-</div>
-));
-})()}
-</div>
-)}
-
-{/* Report Score */}
-{view === "report" && !selectedPlayer && (
-<div style={{background:"#fff",borderRadius:12,border:"1px solid #e7e5e4",padding:20}}>
-<h3 style={{margin:"0 0 4px",fontSize:15,fontWeight:700}}>Report a Score</h3>
-<p style={{margin:"0 0 16px",fontSize:12,color:"#78716c"}}>Fill in the match details below. This opens a pre-formatted email to Kathy with your opponent CC'd.</p>
-<ScoreReportForm/>
-</div>
-)}
 
 {/* Directory */}
 {view === "directory" && !selectedPlayer && (
@@ -1077,8 +820,7 @@ style={{padding:"8px 14px",fontSize:13,border:"1px solid #d6d3d1",borderRadius:2
 borderBottom:"1px solid #e7e5e4",textTransform:"uppercase",letterSpacing:"0.05em"}}>
 <span>#</span><span>Name</span><span>Phone</span><span>Email</span>
 </div>
-{directoryList.map((p, i) => {
-return (
+{directoryList.map((p, i) => (
 <div key={p.name} style={{display:"grid",gridTemplateColumns:"36px 1fr 1fr 1fr",padding:"10px 12px",fontSize:13,alignItems:"center",
 borderBottom:i<directoryList.length-1?"1px solid #f5f5f4":"none",background:"transparent"}}>
 <span style={{fontWeight:600,color:"#a8a29e",fontSize:11}}>{i + 1}</span>
@@ -1092,8 +834,18 @@ borderBottom:i<directoryList.length-1?"1px solid #f5f5f4":"none",background:"tra
 {p.email ? <a href={`mailto:${p.email}`} style={{color:"#2563eb",textDecoration:"none"}}>{p.email}</a> : "Not listed"}
 </span>
 </div>
-);
-})}
+))}
+</div>
+{/* Withdrawn players */}
+<div style={{background:"#fff",borderRadius:12,border:"1px solid #e7e5e4",padding:16,marginTop:12}}>
+<h4 style={{margin:"0 0 8px",fontSize:13,fontWeight:600,color:"#78716c"}}>Withdrawn Players</h4>
+{WITHDRAWN.map(w => (
+<div key={w.name} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"6px 0",fontSize:13,
+borderBottom:"1px solid #f5f5f4"}}>
+<span style={{color:"#a8a29e"}}>{w.name}</span>
+<span style={{fontSize:11,color:"#a8a29e"}}>{w.note}</span>
+</div>
+))}
 </div>
 <p style={{fontSize:11,color:"#a8a29e",textAlign:"center",marginTop:12}}>Contact info from Kathy's registration list. Tap a name to see their ladder stats.</p>
 </div>
